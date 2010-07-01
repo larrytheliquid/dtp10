@@ -21,6 +21,7 @@ Ruby used for examples of more mainstream software development, and
 Agda used for the dependently typed examples.
 
 TODO: mutter composition
+TODO: mutter interactive theorem proving
 
 !SLIDE bullets
 # Software testing #
@@ -69,3 +70,55 @@ toy version of the web application problem domain.
 
     STATUSES = [:ok, :created, :internal_error]
 
+!SLIDES
+# Passing assertion #
+
+    def created?(method)
+      case method
+      when :put  then true
+      when :post then true
+      else            false
+      end
+    end
+
+    class UnitTests < Test::Unit::TestCase
+      def test_post_created?
+        assert_equal created?(:post), true
+      end
+    end
+
+!NOTES flipped assert_equal argument order to make it look more similar
+
+!SLIDE
+# Well-typed propositional equality #
+
+    created? : Method → Bool
+    created? PUT  = true
+    created? POST = true
+    created? _    = false
+
+    test-POST-created? : created? POST ≡ true
+    test-POST-created? = refl
+
+!SLIDE
+# Failing assertion #
+
+    class UnitTests < Test::Unit::TestCase
+      def test_get_created?
+        assert_equal created?(:get), true
+      end
+    end
+
+    # 1) Failure:
+    # test_get_created?(UnitTests)
+    # <true> expected but was <false>.
+
+!SLIDE
+# Ill-typed propositional equality #
+
+    test-GET-created? : created? GET ≡ true
+    test-GET-created? = refl
+
+    -- false != true of type Bool
+    -- when checking that the expression refl
+    -- has type false ≡ true

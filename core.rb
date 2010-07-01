@@ -1,3 +1,6 @@
+require 'rubygems'
+require 'test/unit'
+
 METHODS = [:get, :put, :post, :delete]
 
 Request = Struct.new(:method)
