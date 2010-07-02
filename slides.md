@@ -87,7 +87,11 @@ toy version of the web application problem domain.
       end
     end
 
-!NOTES flipped assert_equal argument order to make it look more similar
+!NOTES 
+
+flipped assert_equal argument order to make it look more similar
+
+TODO: mutter unit tests
 
 !SLIDE
 # Well-typed propositional equality #
@@ -122,3 +126,6 @@ toy version of the web application problem domain.
     -- false != true of type Bool
     -- when checking that the expression refl
     -- has type false ≡ true
+
+!SLIDE
+# Mock/stub/expectation testing #

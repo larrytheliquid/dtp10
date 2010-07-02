@@ -1,5 +1,5 @@
 module Assertion where
-open import Core
+open import Core public
 
 created? : Method → Bool
 created? PUT  = true

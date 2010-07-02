@@ -1,0 +1,59 @@
+might be better to show assertions with an existing well known function like addition
+... then we can show the practice of test first programming without having defined functions like "created?" yet and instead display our point of stubbing them
+
+... also look at lemmachine to see how it got around the notorious (method r) propeq problem
+
+
+
+
+=============
+
+
+paramterizing by propositiona equality types is really where the stubbing happens
+
+=============================
+
+need to parameterize created? by record in slides (Assertion2 & ruby version)
+
+==============================================
+
+outside-in development, pretend like created? has not been implemented
+
+... maybe mention TDD in the intro after all... or even BDD!!
+
+==============================================
+
+may want to use ruby in a functional style instead of oo for more direct comparisons
+
+==============================================
+
+reconsider this:
+  req = Request.new(:post)
+may want to instead Request.allocate, or rand from METHODS
+... can point out the advantage of universe poly though!!!
+
+==============================================
+
+explain syntax sugar of "rewrite"
+
+==============================================
+
+req.stubs(:created?).returns(true)
+... could instead
+Request.any_instance.stubs(:created?).with(req).returns(true)
+
+==============================================
+
+mention difference where stubs does not raise error if the method was not previously defined
+... but some libraries may do this
+... maybe even explicitly add a raise error respond_to? check in there for clarity
+... or even defined? 3.succ
+
+
+==============================================
+
+show similarity between propeq hypo judges & stubs
+
+==============================================
+
+http://martinfowler.com/articles/mocksArentStubs.html
