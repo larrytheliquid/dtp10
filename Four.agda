@@ -16,8 +16,8 @@ test-else-not-created : ∀ {r} →
   created? r ≡ false
 test-else-not-created {r} p with method r
 ... | GET = refl
-... | POST = ⊥-elim (p refl)
 ... | PUT = refl
+... | POST = ⊥-elim (p refl)
 ... | DELETE = refl
 
 resolve : Request → Status
@@ -42,3 +42,9 @@ test-POST-resolve : ∀ {r} →
   resolve r ≡ Created
 test-POST-resolve p =
   test-created-resolve (test-POST-created p)
+
+test-else-resolve : ∀ {r} →
+  method r ≢ POST →
+  resolve r ≡ InternalError
+test-else-resolve p =
+  test-internal-error-resolve (test-else-not-created p)
