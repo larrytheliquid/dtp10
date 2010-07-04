@@ -19,7 +19,7 @@ class UnitTests < Test::Unit::TestCase
   end
 
   def test_internal_error_resolve
-    req = Request.new(:post)
+    req = Request.new(:delete)
     req.stubs(:created?).returns(false)
     assert_equal Request.resolve(req), :internal_error
   end

@@ -1,10 +1,27 @@
+
+ruby version reuses same variable while agda one creates a new one every time
+... can solve this by just declaring a global variable used in agda tests
+
+==============================================
+
+assertion <=> (≡ true) typing judgement (as a conclusion of a parametric or hypothesis judgement)
+equality assertion <=> ≡ typing judgement (as a conclusion of a parametric or hypothesis judgement)
+stub <=> ≡ typing judgement (as a hypothesis of a parametric judgement) + rewrite
+stub (only defined) <=> ≡ typing judgement (as a hypothesis of a hypothetical judgement) + rewrite
+mock <=> universal quantification
+
+
+==============================================
+
 might be better to show assertions with an existing well known function like addition
 ... then we can show the practice of test first programming without having defined functions like "created?" yet and instead display our point of stubbing them
 
 ... also look at lemmachine to see how it got around the notorious (method r) propeq problem
 
 
+=============================
 
+http://martinfowler.com/articles/mocksArentStubs.html
 
 =============
 
@@ -49,11 +66,31 @@ mention difference where stubs does not raise error if the method was not previo
 ... maybe even explicitly add a raise error respond_to? check in there for clarity
 ... or even defined? 3.succ
 
+==============================================
+
+propeq hypo judges can be stubs
+but also can be non-quantifiers
 
 ==============================================
 
-show similarity between propeq hypo judges & stubs
+need to evaluate why zero/Vec does not unify but refl does
+... is it bc of the reuse of the same variable in refl, or
+ merely that only one constructor exists
+... or that we capture the type in a variable rather than
+pattern but then case on that variable value?
 
 ==============================================
 
-http://martinfowler.com/articles/mocksArentStubs.html
+how does stubs_if_defined (raise error if not) compare to
+treating forall as a mock?
+... stubs_if_defined does not require any particular
+implementation, in fact even a postulate will do
+... on the ruby side returning nil works because it does
+not need to obey a type signature
+
+in fp, a stub is technically on the implicit object, which
+is why later using mock for uni quant still works, bc the
+implicit object has already been postulated for even though
+the mock has no methods on it
+
+

@@ -4,8 +4,6 @@ require 'mocha'
 
 METHODS = [:get, :put, :post, :delete]
 
-Request = Struct.new(:method)
-
 class Request
   def initialize(method)
     @method = method

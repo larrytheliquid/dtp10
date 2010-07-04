@@ -22,6 +22,7 @@ Agda used for the dependently typed examples.
 
 TODO: mutter composition
 TODO: mutter interactive theorem proving
+TODO: put in prop equality type slide
 
 !SLIDE bullets
 # Software testing #
@@ -35,7 +36,7 @@ TODO: mutter interactive theorem proving
 Specifically using the domain of testing
 
 !SLIDE
-# Agda types #
+# Agda data #
 
     data Method : Set where
       GET PUT POST DELETE : Method
@@ -56,7 +57,7 @@ Small & incomplete data type core to be used for code examples of a
 toy version of the web application problem domain.
 
 !SLIDE
-# Ruby types #
+# Ruby data #
 
     METHODS = [:get, :put, :post, :delete]
 
@@ -129,3 +130,14 @@ TODO: mutter unit tests
 
 !SLIDE
 # Mock/stub/expectation testing #
+
+!NOTES
+
+mention that we POST could be wrong, but we are free to assume
+whatever we want and properly reason using those assumptions (whether
+or not we can provide examples of those assumptions is another matter)
+
+!NOTES
+
+you can think of stub as transforming a test from a propeq typing
+judgement into a hypothetical propeq typing judgement

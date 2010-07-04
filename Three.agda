@@ -8,13 +8,13 @@ resolve r with created? r
 ... | true = Created
 ... | false = InternalError
 
-test-created-resolve : ∀ {r} →
-  created? r ≡ true →
-  resolve r ≡ Created
+test-created-resolve :
+  created? (req POST) ≡ true →
+  resolve (req POST) ≡ Created
 test-created-resolve p rewrite p = refl
 
-test-internal-error-resolve : ∀ {r} →
-  created? r ≡ false →
-  resolve r ≡ InternalError
+test-internal-error-resolve :
+  created? (req DELETE) ≡ false →
+  resolve (req DELETE) ≡ InternalError
 test-internal-error-resolve p rewrite p = refl
 
