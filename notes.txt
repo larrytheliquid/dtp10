@@ -119,3 +119,7 @@ we know that postulate will never be able to provide a case distinction, but its
 
 even though agda can optimize, it still must work on already defined functions
 ... so there is a tradeoff between the two languages
+
+==============================================
+
+take out defined function version until after forall

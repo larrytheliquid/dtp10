@@ -141,6 +141,17 @@ TODO: mutter unit tests
     end
 
 !SLIDE
+
+    class UnitTests < Test::Unit::TestCase
+      def test_internal_error_resolve
+        req = Request.new(:delete)
+        req.stubs(:created?).returns(false)
+        assert_equal Request.resolve(req),
+                     :internal_error
+      end
+    end
+
+!SLIDE
 # Hypothetical propositional equality #
 
     postulate created? : Request → Bool
@@ -156,49 +167,6 @@ TODO: mutter unit tests
 
 !SLIDE
 
-    class Request
-      def self.resolve(r)
-        if r.created?
-          :created
-        else
-          :internal_error
-        end
-      end
-    end
-
-!SLIDE
-
-    class UnitTests < Test::Unit::TestCase
-      def test_created_resolve
-        req = Request.new(:post)
-        req.stubs(:created?).returns(true)
-        assert_equal Request.resolve(req),
-                     :created
-      end
-
-      def test_internal_error_resolve
-        req = Request.new(:delete)
-        req.stubs(:created?).returns(false)
-        assert_equal Request.resolve(req),
-                     :internal_error
-      end
-    end
-
-!SLIDE
-
-    resolve : Request → Status
-    resolve r with created? r
-    ... | true  = Created
-    ... | false = InternalError
-
-!SLIDE
-
-    test-created-resolve :
-      created? (req POST) ≡ true →
-      resolve  (req POST) ≡ Created
-    test-created-resolve p rewrite p =
-      refl
-
     test-internal-error-resolve :
       created? (req DELETE) ≡ false →
       resolve  (req DELETE) ≡ InternalError
@@ -206,7 +174,7 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
-# Universal quantification #
+# Well-typed universal quantification #
 
     test-created-resolve : ∀ {r} →
       created? r ≡ true →
@@ -221,7 +189,7 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
-# Mock #
+# Mock with stub #
 
     class UnitTests < Test::Unit::TestCase
       def test_created_resolve
@@ -240,6 +208,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
+# Ill-typed universal quantification #
 
     test-created-resolve : ∀ {r} →
       resolve r ≡ Created
@@ -252,6 +221,7 @@ TODO: mutter unit tests
     --   method .r)) ≡ Created
 
 !SLIDE
+# Mock without stub #
 
     class UnitTests < Test::Unit::TestCase
       def test_created_resolve
@@ -265,3 +235,24 @@ TODO: mutter unit tests
       ['resolve' in 'test_created_resolve']:
     unexpected invocation: 
       #<Mock:0x1011a0d18>.created?()
+
+!SLIDE
+# Ruby resolve implementation #
+
+    class Request
+      def self.resolve(r)
+        if r.created?
+          :created
+        else
+          :internal_error
+        end
+      end
+    end
+
+!SLIDE
+# Agda resolve implementation #
+
+    resolve : Request → Status
+    resolve r with created? r
+    ... | true  = Created
+    ... | false = InternalError
