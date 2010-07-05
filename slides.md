@@ -141,17 +141,6 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-
-    class UnitTests < Test::Unit::TestCase
-      def test_internal_error_resolve
-        req = Request.new(:delete)
-        req.stubs(:created?).returns(false)
-        assert_equal Request.resolve(req),
-                     :internal_error
-      end
-    end
-
-!SLIDE
 # Hypothetical propositional equality #
 
     postulate created? : Request → Bool
@@ -166,6 +155,32 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
+
+    class Request
+      def self.resolve(r)
+        if r.created?
+          :created
+        else
+          :internal_error
+        end
+      end
+    end
+
+    class UnitTests < Test::Unit::TestCase
+      def test_internal_error_resolve
+        req = Request.new(:delete)
+        req.stubs(:created?).returns(false)
+        assert_equal Request.resolve(req),
+                     :internal_error
+      end
+    end
+
+!SLIDE
+
+    resolve : Request → Status
+    resolve r with created? r
+    ... | true  = Created
+    ... | false = InternalError
 
     test-internal-error-resolve :
       created? (req DELETE) ≡ false →
@@ -231,28 +246,43 @@ TODO: mutter unit tests
       end
     end
 
-    test_created_resolve(UnitTests)
-      ['resolve' in 'test_created_resolve']:
-    unexpected invocation: 
-      #<Mock:0x1011a0d18>.created?()
+    # test_created_resolve(UnitTests)
+    #   ['resolve' in 'test_created_resolve']:
+    # unexpected invocation: 
+    #   #<Mock:0x1011a0d18>.created?()
 
 !SLIDE
-# Ruby resolve implementation #
+# Ruby "created?" implmentation #
 
     class Request
-      def self.resolve(r)
-        if r.created?
-          :created
-        else
-          :internal_error
-        end
+      def created?
+        method == :post
       end
     end
 
-!SLIDE
-# Agda resolve implementation #
+!NOTES No need to change tests (refactoring)
 
-    resolve : Request → Status
-    resolve r with created? r
-    ... | true  = Created
-    ... | false = InternalError
+!SLIDE
+# Agda "created?" implmentation #
+
+    created? : Request → Bool
+    created? r with method r
+    ... | POST = true
+    ... | _    = false
+
+!NOTES No need to change proofs (refactoring)
+
+!SLIDE
+# Proof composition #
+
+    test-created-resolve : ∀ {r} →
+      created? r ≡ true →
+      resolve  r ≡ Created
+    test-created-resolve p rewrite p =
+      refl
+
+    test-POST-resolve : ∀ {r} →
+      method  r ≡ POST →
+      resolve r ≡ Created
+    test-POST-resolve p =
+      test-created-resolve (test-POST-created p)

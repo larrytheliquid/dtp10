@@ -122,4 +122,4 @@ even though agda can optimize, it still must work on already defined functions
 
 ==============================================
 
-take out defined function version until after forall
+need to define resolve properly for earlier examples
