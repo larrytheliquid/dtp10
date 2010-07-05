@@ -27,9 +27,12 @@ TODO: put in prop equality type slide
 !SLIDE bullets
 # Software testing #
 
-* assertions
-* unit tests
-* integration tests
+* Assertion
+* Stub
+* Mock
+* Unit test
+* Integration test
+* Test-driven development (TDD)
 
 !NOTES
 
@@ -74,17 +77,10 @@ toy version of the web application problem domain.
 !SLIDES
 # Passing assertion #
 
-    def created?(method)
-      case method
-      when :put  then true
-      when :post then true
-      else            false
-      end
-    end
-
     class UnitTests < Test::Unit::TestCase
-      def test_post_created?
-        assert_equal created?(:post), true
+      def test_method
+        req = Request.new(:post)
+        assert_equal req.method, :post
       end
     end
 
@@ -97,47 +93,175 @@ TODO: mutter unit tests
 !SLIDE
 # Well-typed propositional equality #
 
-    created? : Method → Bool
-    created? PUT  = true
-    created? POST = true
-    created? _    = false
-
-    test-POST-created? : created? POST ≡ true
-    test-POST-created? = refl
+    test-method : method (req POST) ≡ POST
+    test-method = refl
 
 !SLIDE
 # Failing assertion #
 
     class UnitTests < Test::Unit::TestCase
-      def test_get_created?
-        assert_equal created?(:get), true
+      def test_method
+        req = Request.new(:post)
+        assert_equal req.method, :get
       end
     end
 
     # 1) Failure:
-    # test_get_created?(UnitTests)
-    # <true> expected but was <false>.
+    # test_method(UnitTests)
+    # <:get> expected but was <:post>.
 
 !SLIDE
 # Ill-typed propositional equality #
 
-    test-GET-created? : created? GET ≡ true
-    test-GET-created? = refl
+    test-method : method (req POST) ≡ GET
+    test-method = refl
 
-    -- false != true of type Bool
+    -- POST != GET of type Method
     -- when checking that the expression refl
-    -- has type false ≡ true
+    --   has type POST ≡ GET
 
 !SLIDE
-# Mock/stub/expectation testing #
+# Stub #
 
-!NOTES
+    class Request
+      def created?() raise end
 
-mention that we POST could be wrong, but we are free to assume
-whatever we want and properly reason using those assumptions (whether
-or not we can provide examples of those assumptions is another matter)
+      def self.resolve(_)
+        :created
+      end
+    end
 
-!NOTES
+    class UnitTests < Test::Unit::TestCase
+      def test_created_resolve
+        req = Request.new(:post)
+        req.stubs(:created?).returns(true)
+        assert_equal Request.resolve(req),
+                     :created
+      end
+    end
 
-you can think of stub as transforming a test from a propeq typing
-judgement into a hypothetical propeq typing judgement
+!SLIDE
+# Hypothetical propositional equality #
+
+    postulate created? : Request → Bool
+
+    resolve : Request → Status
+    resolve _ = Created
+
+    test-created-resolve :
+      created? (req POST) ≡ true →
+      resolve  (req POST) ≡ Created
+    test-created-resolve p rewrite p =
+      refl
+
+!SLIDE
+
+    class Request
+      def self.resolve(r)
+        if r.created?
+          :created
+        else
+          :internal_error
+        end
+      end
+    end
+
+!SLIDE
+
+    class UnitTests < Test::Unit::TestCase
+      def test_created_resolve
+        req = Request.new(:post)
+        req.stubs(:created?).returns(true)
+        assert_equal Request.resolve(req),
+                     :created
+      end
+
+      def test_internal_error_resolve
+        req = Request.new(:delete)
+        req.stubs(:created?).returns(false)
+        assert_equal Request.resolve(req),
+                     :internal_error
+      end
+    end
+
+!SLIDE
+
+    resolve : Request → Status
+    resolve r with created? r
+    ... | true  = Created
+    ... | false = InternalError
+
+!SLIDE
+
+    test-created-resolve :
+      created? (req POST) ≡ true →
+      resolve  (req POST) ≡ Created
+    test-created-resolve p rewrite p =
+      refl
+
+    test-internal-error-resolve :
+      created? (req DELETE) ≡ false →
+      resolve  (req DELETE) ≡ InternalError
+    test-internal-error-resolve p rewrite p =
+      refl
+
+!SLIDE
+# Universal quantification #
+
+    test-created-resolve : ∀ {r} →
+      created? r ≡ true →
+      resolve  r ≡ Created
+    test-created-resolve p rewrite p =
+      refl
+
+    test-internal-error-resolve : ∀ {r} →
+      created? r ≡ false →
+      resolve  r ≡ InternalError
+    test-internal-error-resolve p rewrite p =
+      refl
+
+!SLIDE
+# Mock #
+
+    class UnitTests < Test::Unit::TestCase
+      def test_created_resolve
+        req = mock
+        req.stubs(:created?).returns(true)
+        assert_equal Request.resolve(req),
+                     :created
+      end
+
+      def test_internal_error_resolve
+        req = mock
+        req.stubs(:created?).returns(false)
+        assert_equal Request.resolve(req),
+                     :internal_error
+      end
+    end
+
+!SLIDE
+
+    test-created-resolve : ∀ {r} →
+      resolve r ≡ Created
+    test-created-resolve = refl
+
+    -- resolve .r | (created? .r | method .r) !=
+    --   Created of type Status
+    -- when checking that the expression refl
+    --   has type (resolve .r | (created? .r |
+    --   method .r)) ≡ Created
+
+!SLIDE
+
+    class UnitTests < Test::Unit::TestCase
+      def test_created_resolve
+        req = mock
+        assert_equal Request.resolve(req),
+                     :created
+      end
+    end
+
+    test_created_resolve(UnitTests)
+      ['resolve' in 'test_created_resolve']:
+    unexpected invocation: 
+      #<Mock:0x1011a0d18>.created?()

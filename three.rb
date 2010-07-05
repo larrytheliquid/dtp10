@@ -11,17 +11,17 @@ class Request
 end
 
 class UnitTests < Test::Unit::TestCase
-
   def test_created_resolve
     req = Request.new(:post)
     req.stubs(:created?).returns(true)
-    assert_equal Request.resolve(req), :created
+    assert_equal Request.resolve(req),
+                 :created
   end
 
   def test_internal_error_resolve
     req = Request.new(:delete)
     req.stubs(:created?).returns(false)
-    assert_equal Request.resolve(req), :internal_error
+    assert_equal Request.resolve(req),
+                 :internal_error
   end
-
 end

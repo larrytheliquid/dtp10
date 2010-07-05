@@ -97,4 +97,25 @@ is why later using mock for uni quant still works, bc the
 implicit object has already been postulated for even though
 the mock has no methods on it
 
+==============================================
 
+postulate is like defining a method that
+raises an error
+
+stub only requires a rewrite if it is different than what it stubs, & what it stubs is non-trivial?
+
+in ruby mocks raise errors on method calls, in agda compile errors happen in uni quants on unsolvable case distinctions
+
+... its like using smart mocks that do not actually call a method if the distinction is evident anyway
+... same with stubs, they are not needed if what they are used for is always the same
+
+==============================================
+
+may be better to go through happy path first, then backtrack to explain actual differences
+
+we know that postulate will never be able to provide a case distinction, but its result may be ignored anyway
+... and if it is then the notion of it being equivalent to defining a fun that raises an error is false
+... bc it could still get "optimized away", maybe it has to do with the lazy semantics
+
+even though agda can optimize, it still must work on already defined functions
+... so there is a tradeoff between the two languages
