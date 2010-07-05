@@ -1,4 +1,8 @@
 
+could be a result of builtin record type methods for things like method accessors bypassing something
+
+==============================================
+
 ruby version reuses same variable while agda one creates a new one every time
 ... can solve this by just declaring a global variable used in agda tests
 
@@ -6,8 +10,8 @@ ruby version reuses same variable while agda one creates a new one every time
 
 assertion <=> (≡ true) typing judgement (as a conclusion of a parametric or hypothesis judgement)
 equality assertion <=> ≡ typing judgement (as a conclusion of a parametric or hypothesis judgement)
-stub <=> ≡ typing judgement (as a hypothesis of a parametric judgement) + rewrite
-stub (only defined) <=> ≡ typing judgement (as a hypothesis of a hypothetical judgement) + rewrite
+stub <=> ≡ typing judgement (as a hypothesis of a parametric judgement), using rewrite if stuck
+stub (only defined) <=> ≡ typing judgement (as a hypothesis of a hypothetical judgement) using rewrite if stuck
 mock <=> universal quantification
 
 

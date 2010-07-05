@@ -15,6 +15,11 @@ karazie _ with true
 alwaysZero : ∀ {b} → karazie b ≡ zero
 alwaysZero = refl
 
+andNow : ∀ {b} →
+          karazie b ≡ 7 →
+          Morality
+andNow p rewrite p | p = {!!}
+
 doitbabe : Bool → ℕ
 doitbabe _ with gray
 ... | black = 0
