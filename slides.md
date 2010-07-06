@@ -39,7 +39,7 @@ TODO: put in prop equality type slide
 Specifically using the domain of testing
 
 !SLIDE
-# Agda data #
+# Algebraic datatypes & records #
 
     data Method : Set where
       GET PUT POST DELETE : Method
@@ -60,7 +60,7 @@ Small & incomplete data type core to be used for code examples of a
 toy version of the web application problem domain.
 
 !SLIDE
-# Ruby data #
+# Constants & classes #
 
     METHODS = [:get, :put, :post, :delete]
 
@@ -121,7 +121,7 @@ TODO: mutter unit tests
     --   has type POST ≡ GET
 
 !SLIDE
-# Stub #
+# Diverging `created?` & incomplete `resolve` #
 
     class Request
       def created?() raise end
@@ -130,6 +130,17 @@ TODO: mutter unit tests
         :created
       end
     end
+
+!SLIDE
+# Diverging `created?` & incomplete `resolve` #
+
+    postulate created? : Request → Bool
+
+    resolve : Request → Status
+    resolve _ = Created
+
+!SLIDE
+# Stub #
 
     class UnitTests < Test::Unit::TestCase
       def test_created_resolve
@@ -143,11 +154,6 @@ TODO: mutter unit tests
 !SLIDE
 # Hypothetical propositional equality #
 
-    postulate created? : Request → Bool
-
-    resolve : Request → Status
-    resolve _ = Created
-
     test-created-resolve :
       created? (req POST) ≡ true →
       resolve  (req POST) ≡ Created
@@ -155,6 +161,7 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
+# Complete `resolve` #
 
     class Request
       def self.resolve(r)
@@ -166,7 +173,24 @@ TODO: mutter unit tests
       end
     end
 
+!SLIDE
+# Complete `resolve` #
+
+    resolve : Request → Status
+    resolve r with created? r
+    ... | true  = Created
+    ... | false = InternalError
+
+!SLIDE
+
     class UnitTests < Test::Unit::TestCase
+      def test_created_resolve
+        req = Request.new(:post)
+        req.stubs(:created?).returns(true)
+        assert_equal Request.resolve(req),
+                     :created
+      end
+
       def test_internal_error_resolve
         req = Request.new(:delete)
         req.stubs(:created?).returns(false)
@@ -177,10 +201,11 @@ TODO: mutter unit tests
 
 !SLIDE
 
-    resolve : Request → Status
-    resolve r with created? r
-    ... | true  = Created
-    ... | false = InternalError
+    test-created-resolve :
+      created? (req POST) ≡ true →
+      resolve  (req POST) ≡ Created
+    test-created-resolve p rewrite p =
+      refl
 
     test-internal-error-resolve :
       created? (req DELETE) ≡ false →
@@ -252,7 +277,7 @@ TODO: mutter unit tests
     #   #<Mock:0x1011a0d18>.created?()
 
 !SLIDE
-# Ruby "created?" implmentation #
+# Complete `created?` #
 
     class Request
       def created?
@@ -263,7 +288,7 @@ TODO: mutter unit tests
 !NOTES No need to change tests (refactoring)
 
 !SLIDE
-# Agda "created?" implmentation #
+# Complete `created?` #
 
     created? : Request → Bool
     created? r with method r
