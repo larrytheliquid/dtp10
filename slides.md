@@ -121,49 +121,11 @@ TODO: mutter unit tests
     --   has type POST ≡ GET
 
 !SLIDE
-# `created?` (diverging) & `resolve` (incomplete) #
+# `created?` (diverging) & `resolve` (complete) #
 
     class Request
       def created?() raise end
 
-      def self.resolve(_)
-        :created
-      end
-    end
-
-!SLIDE
-# `created?` (diverging) & `resolve` (incomplete) #
-
-    postulate created? : Request → Bool
-
-    resolve : Request → Status
-    resolve _ = Created
-
-!SLIDE
-# Stub (passing & uncalled) #
-
-    class Tests < Test::Unit::TestCase
-      def test_created_resolve
-        req = Request.new(:post)
-        req.stubs(:created?).returns(true)
-        assert_equal Request.resolve(req),
-                     :created
-      end
-    end
-
-!SLIDE
-# Hypothetical propositional equality (well-typed & unanalyzed) #
-
-    test-created-resolve :
-      created? (req POST) ≡ true →
-      resolve  (req POST) ≡ Created
-    test-created-resolve p rewrite p =
-      refl
-
-!SLIDE
-# `resolve` (complete) #
-
-    class Request
       def self.resolve(r)
         if r.created?
           :created
@@ -174,7 +136,9 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-# `resolve` (complete) #
+# `created?` (postulated) & `resolve` (complete) #
+
+    postulate created? : Request → Bool
 
     resolve : Request → Status
     resolve r with created? r
@@ -182,7 +146,7 @@ TODO: mutter unit tests
     ... | false = InternalError
 
 !SLIDE
-# Stub (passing & called) #
+# Stub #
 
     class Tests < Test::Unit::TestCase
       def test_created_resolve
@@ -201,7 +165,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-# Hypothetical propositional equality (well-typed & analyzed) #
+# Hypothetical propositional equality #
 
     test-created-resolve :
       created? (req POST) ≡ true →
@@ -216,7 +180,7 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
-# Universal quantification (well-typed) #
+# Universal quantification (with hypothesis) #
 
     test-created-resolve : ∀ {r} →
       created? r ≡ true →
@@ -231,7 +195,7 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
-# Mock (passing) #
+# Mock (with stub) #
 
     class Tests < Test::Unit::TestCase
       def test_created_resolve
@@ -250,7 +214,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-# Universal quantification (ill-typed) #
+# Universal quantification (no hypothesis) #
 
     test-created-resolve : ∀ {r} →
       resolve r ≡ Created
@@ -262,8 +226,13 @@ TODO: mutter unit tests
     --   has type (resolve .r | (created? .r |
     --   method .r)) ≡ Created
 
+!NOTES
+
+Universal quantification in affect causes all functions that use it to
+behave as if they were postulated/diverging
+
 !SLIDE
-# Mock (failing) #
+# Mock (no stub) #
 
     class Tests < Test::Unit::TestCase
       def test_created_resolve
@@ -278,6 +247,13 @@ TODO: mutter unit tests
     # unexpected invocation: 
     #   #<Mock:0x1011a0d18>.created?()
 
+!NOTES
+
+Mocked methods simply do not have methods defined
+
+To see how mock / universal quantification differs we must look at
+what happens when created? is completed
+
 !SLIDE
 # `created?` (complete) #
 
@@ -287,20 +263,20 @@ TODO: mutter unit tests
       end
     end
 
-!NOTES No need to change tests (refactoring)
-
-!SLIDE
-# `created?` (complete) #
-
     created? : Request → Bool
     created? r with method r
     ... | POST = true
     ... | _    = false
 
-!NOTES No need to change proofs (refactoring)
+!NOTES
+
+No need to change tests/proofs (refactoring)
+
+Mock differs in the complete scenario in that it still requires a
+stub, & similarly universal quantification still requires a hypothesis
 
 !SLIDE
-# Proof composition (well-typed) #
+# Proof composition #
 
     test-created-resolve : ∀ {r} →
       created? r ≡ true →
@@ -313,3 +289,17 @@ TODO: mutter unit tests
       resolve r ≡ Created
     test-POST-resolve p =
       test-created-resolve (test-POST-created p)
+
+!SLIDE
+# Details #
+
+!NOTES
+
+More similarities than shown. For example, if diverging functions are
+defined but never used than of course they will not cause failures.
+
+Further, informal version fails on method invocation while formal
+version fails on unsolvable case analysis.
+
+Rewrites may be performed more than once, just as stubs with multiple
+values may be defined.
