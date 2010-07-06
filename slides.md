@@ -289,6 +289,7 @@ stub, & similarly universal quantification still requires a hypothesis
     test-POST-resolve p =
       test-created-resolve (test-POST-created p)
 
+!SLIDE
 # Test composition #
 
 !SLIDE
