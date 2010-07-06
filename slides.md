@@ -278,17 +278,18 @@ stub, & similarly universal quantification still requires a hypothesis
 !SLIDE
 # Proof composition #
 
-    test-created-resolve : ∀ {r} →
-      created? r ≡ true →
-      resolve  r ≡ Created
-    test-created-resolve p rewrite p =
-      refl
+    test-POST-created : ∀ {r} →
+      method r ≡ POST →
+      created? r ≡ true
+    test-POST-created p rewrite p = refl
 
     test-POST-resolve : ∀ {r} →
       method  r ≡ POST →
       resolve r ≡ Created
     test-POST-resolve p =
       test-created-resolve (test-POST-created p)
+
+# Test composition #
 
 !SLIDE
 # Details #
@@ -303,3 +304,5 @@ version fails on unsolvable case analysis.
 
 Rewrites may be performed more than once, just as stubs with multiple
 values may be defined.
+
+Composition becomes powerful with things like the Middleware type.
