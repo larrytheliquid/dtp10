@@ -75,9 +75,9 @@ toy version of the web application problem domain.
     STATUSES = [:ok, :created, :internal_error]
 
 !SLIDES
-# Passing assertion #
+# Assertion (passing) #
 
-    class UnitTests < Test::Unit::TestCase
+    class Tests < Test::Unit::TestCase
       def test_method
         req = Request.new(:post)
         assert_equal req.method, :post
@@ -91,15 +91,15 @@ flipped assert_equal argument order to make it look more similar
 TODO: mutter unit tests
 
 !SLIDE
-# Well-typed propositional equality #
+# Propositional equality (well-typed) #
 
     test-method : method (req POST) ≡ POST
     test-method = refl
 
 !SLIDE
-# Failing assertion #
+# Assertion (failing) #
 
-    class UnitTests < Test::Unit::TestCase
+    class Tests < Test::Unit::TestCase
       def test_method
         req = Request.new(:post)
         assert_equal req.method, :get
@@ -107,11 +107,11 @@ TODO: mutter unit tests
     end
 
     # 1) Failure:
-    # test_method(UnitTests)
+    # test_method(Tests)
     # <:get> expected but was <:post>.
 
 !SLIDE
-# Ill-typed propositional equality #
+# Propositional equality (ill-typed) #
 
     test-method : method (req POST) ≡ GET
     test-method = refl
@@ -121,7 +121,7 @@ TODO: mutter unit tests
     --   has type POST ≡ GET
 
 !SLIDE
-# Diverging `created?` & incomplete `resolve` #
+# `created?` (diverging) & `resolve` (incomplete) #
 
     class Request
       def created?() raise end
@@ -132,7 +132,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-# Diverging `created?` & incomplete `resolve` #
+# `created?` (diverging) & `resolve` (incomplete) #
 
     postulate created? : Request → Bool
 
@@ -140,9 +140,9 @@ TODO: mutter unit tests
     resolve _ = Created
 
 !SLIDE
-# Stub #
+# Stub (passing & uncalled) #
 
-    class UnitTests < Test::Unit::TestCase
+    class Tests < Test::Unit::TestCase
       def test_created_resolve
         req = Request.new(:post)
         req.stubs(:created?).returns(true)
@@ -152,7 +152,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-# Hypothetical propositional equality #
+# Hypothetical propositional equality (well-typed & unanalyzed) #
 
     test-created-resolve :
       created? (req POST) ≡ true →
@@ -161,7 +161,7 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
-# Complete `resolve` #
+# `resolve` (complete) #
 
     class Request
       def self.resolve(r)
@@ -174,7 +174,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-# Complete `resolve` #
+# `resolve` (complete) #
 
     resolve : Request → Status
     resolve r with created? r
@@ -182,8 +182,9 @@ TODO: mutter unit tests
     ... | false = InternalError
 
 !SLIDE
+# Stub (passing & called) #
 
-    class UnitTests < Test::Unit::TestCase
+    class Tests < Test::Unit::TestCase
       def test_created_resolve
         req = Request.new(:post)
         req.stubs(:created?).returns(true)
@@ -200,6 +201,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
+# Hypothetical propositional equality (well-typed & analyzed) #
 
     test-created-resolve :
       created? (req POST) ≡ true →
@@ -214,7 +216,7 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
-# Well-typed universal quantification #
+# Universal quantification (well-typed) #
 
     test-created-resolve : ∀ {r} →
       created? r ≡ true →
@@ -229,9 +231,9 @@ TODO: mutter unit tests
       refl
 
 !SLIDE
-# Mock with stub #
+# Mock (passing) #
 
-    class UnitTests < Test::Unit::TestCase
+    class Tests < Test::Unit::TestCase
       def test_created_resolve
         req = mock
         req.stubs(:created?).returns(true)
@@ -248,7 +250,7 @@ TODO: mutter unit tests
     end
 
 !SLIDE
-# Ill-typed universal quantification #
+# Universal quantification (ill-typed) #
 
     test-created-resolve : ∀ {r} →
       resolve r ≡ Created
@@ -261,9 +263,9 @@ TODO: mutter unit tests
     --   method .r)) ≡ Created
 
 !SLIDE
-# Mock without stub #
+# Mock (failing) #
 
-    class UnitTests < Test::Unit::TestCase
+    class Tests < Test::Unit::TestCase
       def test_created_resolve
         req = mock
         assert_equal Request.resolve(req),
@@ -271,13 +273,13 @@ TODO: mutter unit tests
       end
     end
 
-    # test_created_resolve(UnitTests)
+    # test_created_resolve(Tests)
     #   ['resolve' in 'test_created_resolve']:
     # unexpected invocation: 
     #   #<Mock:0x1011a0d18>.created?()
 
 !SLIDE
-# Complete `created?` #
+# `created?` (complete) #
 
     class Request
       def created?
@@ -288,7 +290,7 @@ TODO: mutter unit tests
 !NOTES No need to change tests (refactoring)
 
 !SLIDE
-# Complete `created?` #
+# `created?` (complete) #
 
     created? : Request → Bool
     created? r with method r
@@ -298,7 +300,7 @@ TODO: mutter unit tests
 !NOTES No need to change proofs (refactoring)
 
 !SLIDE
-# Proof composition #
+# Proof composition (well-typed) #
 
     test-created-resolve : ∀ {r} →
       created? r ≡ true →
