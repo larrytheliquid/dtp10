@@ -24,7 +24,7 @@ TODO: mutter composition
 TODO: mutter interactive theorem proving
 TODO: put in prop equality type slide
 
-!SLIDE bullets
+!SLIDE smbullets
 # Software testing #
 
 * Assertion
@@ -75,7 +75,7 @@ toy version of the web application problem domain.
     STATUSES = [:ok, :created, :internal_error]
 
 !SLIDES
-# Assertion (passing) #
+# Equality assertion (passing) #
 
     class Tests < Test::Unit::TestCase
       def test_method
@@ -97,7 +97,7 @@ TODO: mutter unit tests
     test-method = refl
 
 !SLIDE
-# Assertion (failing) #
+# Equality assertion (failing) #
 
     class Tests < Test::Unit::TestCase
       def test_method
@@ -263,6 +263,8 @@ what happens when created? is completed
       end
     end
 
+---------------------------------------
+
     created? : Request → Bool
     created? r with method r
     ... | POST = true
@@ -291,6 +293,33 @@ stub, & similarly universal quantification still requires a hypothesis
 
 !SLIDE
 # Test composition #
+
+!SLIDE center
+
+<table border="1" cellpadding="6">
+<caption>Software verification</caption>
+
+<tr>
+<th>Testing (informal)</th>
+<th>Proving (formal)</th>
+</tr>
+
+<tr>
+<td>equality assertion</td>
+<td>≡ typing judgement</td>
+</tr>
+
+<tr>
+<td>stub</td>
+<td>hypothetical ≡ typing judgement</td>
+</tr>
+
+<tr>
+<td>mock</td>
+<td>universal quantification</td>
+</tr>
+
+</table>
 
 !SLIDE
 # Details #
