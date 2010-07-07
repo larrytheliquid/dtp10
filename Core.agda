@@ -10,9 +10,11 @@ data Method : Set where
 record Request : Set where
   constructor req
   field
-    method : Method
-
+    meth : Method
 open Request public
+
+req-post   = req POST
+req-delete = req DELETE
 
 data Status : Set where
   OK Created InternalError : Status

@@ -1,12 +1,11 @@
 require 'core'
 
-class UnitTests < Test::Unit::TestCase
+class Tests < Test::Unit::TestCase
   def test_created_resolve
-    req = Request.new(:post)
-    req.stubs(:created?).returns(true)
-    assert_equal Request.resolve(req), :created
+    stubs(:created?).with(req_post).returns(true)
+    assert_equal resolve(req_post), :created
   end
 end
 
-#   1) Error: test_created_resolve(UnitTests):
-# NoMethodError: undefined method `resolve' for Request:Class
+#   1) Error: test_created_resolve(Tests):
+# NoMethodError: undefined method `resolve'

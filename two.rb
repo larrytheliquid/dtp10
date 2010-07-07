@@ -1,18 +1,13 @@
 require 'core'
 
-class Request
-  def created?() raise end
+def created?(_) raise    end
 
-  def self.resolve(_)
-    :created
-  end
-end
+def resolve(_)  :created end
 
-class UnitTests < Test::Unit::TestCase
+class Tests < Test::Unit::TestCase
   def test_created_resolve
-    req = Request.new(:post)
-    # req.stubs(:created?).returns(true)
-    assert_equal Request.resolve(req),
+    stubs(:created?).with(req_post).returns(true)
+    assert_equal resolve(req_post),
                  :created
   end
 end

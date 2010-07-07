@@ -1,0 +1,11 @@
+resolve is a class method that takes a request
+
+created? is an instance method on request
+
+method is an instance method on request
+(really just a data accessor)
+
+
+==============================================
+
+need to see if stubs.with works

@@ -2,14 +2,14 @@ require 'rubygems'
 require 'test/unit'
 require 'mocha'
 
-METHODS = [:get, :put, :post, :delete]
+METHODS  = [:get, :put, :post, :delete]
 
-class Request
-  def initialize(method)
-    @method = method
-  end
+Request  = Struct.new(:method)
 
-  def method() @method end
-end
+def req(m)       Request.new(m)               end
+def meth(r)      r.method                     end
+
+def req_post()   @req_post   ||= req(:post)   end
+def req_delete() @req_delete ||= req(:delete) end
 
 STATUSES = [:ok, :created, :internal_error]
