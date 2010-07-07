@@ -1,27 +1,27 @@
 require 'core'
 
-class Request
-  def self.resolve(r)
-    if r.created?
-      :created
-    else
-      :internal_error
-    end
+def created?(r)
+  method(r) == :post
+end
+
+def resolve(r)
+  if created?(r)
+    :created
+  else
+    :internal_error
   end
 end
 
-class UnitTests < Test::Unit::TestCase
-
+class Tests < Test::Unit::TestCase
   def test_created_resolve
-    req = mock
-    req.stubs(:created?).returns(true)
-    assert_equal Request.resolve(req), :created
+    r = mock
+    stubs(:created?).with(r).returns(true)
+    assert_equal resolve(r), :created
   end
 
   def test_post_created
-    req = mock
-    req.stubs(:method).returns(:post)
-    assert_equal req.created?, true
+    r = mock
+    stubs(:method).with(r).returns(:post)
+    assert_equal created?(r), true
   end
-
 end
