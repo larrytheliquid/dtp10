@@ -97,3 +97,7 @@ a general semantics that appears in both informal & formal verification
 ==============================================
 
 powerful thing about compositional test versions is that they provide a stub-free (less brittle) pubic api for reusing tests... more dry too
+
+==============================================
+
+make sure that lazyness explains a function casing but still returning true whose result is being used by another function
