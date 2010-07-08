@@ -78,3 +78,22 @@ think about multiple calls within the same function, rewrite vs stub
 
 highlight use of stubs.with
 
+==============================================
+
+remember that part of the assertion = propeq typing judgement is the refl constructor being explicit & not a variable
+
+==============================================
+
+a general semantics that appears in both informal & formal verification
+... may or may not have been intentional copying of formal methods when these informal ones were created, but either way informative to precisely relate the two otherwise disparate worlds
+
+==============================================
+
+*** for informal composition, need to think of the effects of not passing the p in... maybe we need to parameterize functions by mocks to pass in/along
+... actually it makes a lot of sense to parameterize tests by their mock, just like uni quant as a parameter
+... stubs are the other parameters
+... does it make sense to parameterize informal tests by stubs as well?
+
+==============================================
+
+powerful thing about compositional test versions is that they provide a stub-free (less brittle) pubic api for reusing tests... more dry too
