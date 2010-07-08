@@ -7,7 +7,7 @@ resolve : Request → Status
 resolve _ = Created
 
 test-created-resolve :
-  created? (req POST) ≡ true →
-  resolve (req POST) ≡ Created
+  created? req-post ≡ true →
+  resolve req-post ≡ Created
 test-created-resolve p rewrite p = refl
 

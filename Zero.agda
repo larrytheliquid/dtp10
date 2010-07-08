@@ -2,7 +2,7 @@ module Zero where
 open import Core
 
 test-created-resolve :
-  created? (req POST) ≡ true →
+  created? req-post ≡ true →
   resolve r ≡ Created
 test-created-resolve p = {!!}
 

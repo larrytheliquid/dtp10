@@ -1,7 +1,7 @@
 require 'core'
 
 def created?(r)
-  method(r) == :post
+  meth(r) == :post
 end
 
 def resolve(r)
@@ -21,7 +21,13 @@ class Tests < Test::Unit::TestCase
 
   def test_post_created
     r = mock
-    stubs(:method).with(r).returns(:post)
+    stubs(:meth).with(r).returns(:post)
     assert_equal created?(r), true
+  end
+
+  def test_post_resolve
+    r = mock
+    stubs(:meth).with(r).returns(:post)
+    assert_equal resolve(r), :created
   end
 end

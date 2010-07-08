@@ -4,7 +4,7 @@ open import Core
 postulate created? : Request → Bool
 
 test-created-resolve :
-  created? (req POST) ≡ true →
+  created? req-post ≡ true →
   resolve r ≡ Created
 test-created-resolve p = {!!}
 

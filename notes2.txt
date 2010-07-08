@@ -5,7 +5,76 @@ created? is an instance method on request
 method is an instance method on request
 (really just a data accessor)
 
+==============================================
+
+maybe think about stubs.raises (diverges)
 
 ==============================================
 
 need to see if stubs.with works
+
+==============================================
+
+mock makes it so that any method call on that object is undefined/diverges/postulated
+
+uni quanting a variable makes it so any case analysis on that data is undefined/diverges/postulated
+
+stubbing / rewriting a propeq hypothesis 
+
+the stub equivalence of being able to rewrite only applies if there is a stuck case analysis
+... e.g. postulation
+... due to type-level terms normalizing if possible
+... aka equivalence only applies if term is stuck normalizing
+
+*** the function being stubbed could be using something interna lly that prevents it from normalizing
+
+in informal world, stuck normalizing means diverging (runtime error)
+... equivalent in informal world is a stub that executes the current method first (using with param): fail if no diverge, otherwise actually stub
+... these semantics are quite nice as they force you to remove stubs from functions already implemented
+
+
+now of course when you mock data all functions using it diverge
+
+ways to diverge:
+postulate
+analyzing a variable directly
+analyzing a variable indirectly (through possibly nested calls)
+
+ways to diverge:
+undefined
+raising an exception directly
+raising an exception indirectly (through possibly nested calls)
+
+==============================================
+
+remember that stubbing / rewriting only matters if the function gets called
+... although the diverging check happens write at the stub call
+
+==============================================
+
+getting back a stacktrace shows nested function calls, can also get back a pipe-delimited normalization / case analysis decision point list
+
+==============================================
+
+stub behaves like propeq-hyp-rewrite in a certain amount of cases, but could be equivalent if stub was changed to "rewrite" which did a divergence check
+... mention that in all slides the behavior is the same
+
+==============================================
+
+may want to choose a better, more general, name for diverge
+
+==============================================
+
+even with stub-rewrite, not a complete isomorphism bc lazyness can create a thunk that never gets evaluated
+... so strict/lazy is another distinguishing property!
+... so if we had a haskell mocking library then behavior would be much more similar
+
+==============================================
+
+think about multiple calls within the same function, rewrite vs stub
+... know that at least within different function contexts need multiple rewrites that are analagous to stub returning a list of values for successive calls
+
+==============================================
+
+highlight use of stubs.with
+

@@ -12,11 +12,11 @@ resolve r with created? r
 ... | false = InternalError
 
 test-created-resolve :
-  created? (req POST) ≡ true →
-  resolve (req POST) ≡ Created
+  created? req-post ≡ true →
+  resolve req-post ≡ Created
 test-created-resolve p = refl
 
 test-internal-error-resolve :
-  created? (req DELETE) ≡ false →
-  resolve (req DELETE) ≡ InternalError
+  created? req-delete ≡ false →
+  resolve req-delete ≡ InternalError
 test-internal-error-resolve p = refl
