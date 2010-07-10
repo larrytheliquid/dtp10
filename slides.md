@@ -5,7 +5,7 @@ Unit & integration test composition via lemmas
 Larry Diehl
 -----------
 
-!NOTES
+<div style="display: none;">
 
 A shared general semantics between informal & formal software
 verification.
@@ -26,7 +26,7 @@ Agda used for the dependently typed examples.
 !SLIDE
 # Motivations #
 
-!NOTES
+<div style="display: none;">
 
 A lot more informal software engineers than dependently typed
 programmers.
@@ -55,7 +55,7 @@ field of dependently typed software development.
     data Status : Set where
       OK Created InternalError : Status
 
-!NOTES
+<div style="display: none;">
 
 Small & incomplete data type core to be used for code examples of a
 toy version of the web application problem domain.
@@ -88,7 +88,7 @@ toy version of the web application problem domain.
       end
     end
 
-!NOTES 
+<div style="display: none;"> 
 
 flipped assert_equal argument order to make it look more similar
 
@@ -232,7 +232,7 @@ flipped assert_equal argument order to make it look more similar
     ... | POST = true
     ... | _    = false
 
-!NOTES
+<div style="display: none;">
 
 No need to change tests/proofs (refactoring)
 
@@ -252,7 +252,7 @@ stub, & similarly universal quantification still requires a hypothesis
     --   has type (resolve .r | (created? .r |
     --   meth .r)) ≡ Created
 
-!NOTES
+<div style="display: none;">
 
 Universal quantification in affect causes all functions that use it to
 behave as if they were postulated/diverging
@@ -276,7 +276,7 @@ behave as if they were postulated/diverging
     # unexpected invocation:
     #   #<Mock:0x1011a0340>.meth()
 
-!NOTES
+<div style="display: none;">
 
 Mocked methods simply do not have methods defined
 
@@ -341,7 +341,7 @@ what happens when created? is completed
 * Stronger must-diverge stub
 * lazy vs strict
 
-!NOTES
+<div style="display: none;">
 
 More similarities than shown. For example, if diverging functions are
 defined but never used than of course they will not cause failures.
