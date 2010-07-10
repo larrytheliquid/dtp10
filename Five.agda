@@ -2,7 +2,7 @@ module Five where
 open import Core
 
 created? : Request → Bool
-created? r with method r
+created? r with meth r
 ... | POST = true
 ... | _ = false
 

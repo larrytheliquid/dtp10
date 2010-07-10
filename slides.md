@@ -2,8 +2,16 @@
 
 Unit & integration test composition via lemmas
 ==============================================
+Larry Diehl
+-----------
 
 !NOTES
+
+A shared general semantics between informal & formal software
+verification.
+
+Noticed similarity while working on the verification of an Agda-based
+web framework.
 
 Hearing unit & integration tests within the context of dependent typing
 may seem strange... we would expect to hear terms closer to lemmas &
@@ -12,31 +20,22 @@ be equivalent to proofs, we will show a way of developing dependently
 typed software that feels familiar to users of less formal languages,
 but has extra benefits.
 
+Ruby used for examples of more mainstream software development, and
+Agda used for the dependently typed examples.
+
+!SLIDE
+# Motivations #
+
+!NOTES
+
+A lot more informal software engineers than dependently typed
+programmers.
+
 Hopefully as a result experienced programmers will have an easier time
 transitioning to DTP. Conversely, established software development
 techniques might help illuminate similar techniques within the young
 field of dependently typed software development.
-
-Ruby used for examples of more mainstream software development, and
-Agda used for the dependently typed examples.
-
-TODO: mutter composition
-TODO: mutter interactive theorem proving
-TODO: put in prop equality type slide
-
-!SLIDE smbullets
-# Software testing #
-
-* Assertion
-* Stub
-* Mock
-* Unit test
-* Integration test
-* Test-driven development (TDD)
-
-!NOTES
-
-Specifically using the domain of testing
+... help both fields understand each other.
 
 !SLIDE
 # Algebraic datatypes & records #
@@ -47,9 +46,11 @@ Specifically using the domain of testing
     record Request : Set where
       constructor req
       field
-        method : Method
-
+        meth : Method
     open Request public
+
+    req-post   = req POST
+    req-delete = req DELETE
 
     data Status : Set where
       OK Created InternalError : Status
@@ -62,14 +63,18 @@ toy version of the web application problem domain.
 !SLIDE
 # Constants & classes #
 
-    METHODS = [:get, :put, :post, :delete]
+    METHODS  = [:get, :put, :post, :delete]
 
-    class Request
-      def initialize(method)
-        @method = method
-      end
+    Request  = Struct.new(:meth)
 
-      def method() @method end
+    def req(m) Request.new(m) end
+    def meth(r) r.meth end
+
+    def req_post
+      @req_post ||= req(:post)
+    end
+    def req_delete
+      @req_delete ||= req(:delete)
     end
 
     STATUSES = [:ok, :created, :internal_error]
@@ -78,9 +83,8 @@ toy version of the web application problem domain.
 # Equality assertion (passing) #
 
     class Tests < Test::Unit::TestCase
-      def test_method
-        req = Request.new(:post)
-        assert_equal req.method, :post
+      def test_meth
+        assert_equal meth(req_post), :post
       end
     end
 
@@ -88,33 +92,36 @@ toy version of the web application problem domain.
 
 flipped assert_equal argument order to make it look more similar
 
-TODO: mutter unit tests
+!SLIDE
+# Propositional equality #
+
+    data _≡_ {a : Set} (x : a) : a → Set where
+      refl : x ≡ x
 
 !SLIDE
 # Propositional equality (well-typed) #
 
-    test-method : method (req POST) ≡ POST
-    test-method = refl
+    test-meth : meth req-post ≡ POST
+    test-meth = refl
 
 !SLIDE
 # Equality assertion (failing) #
 
     class Tests < Test::Unit::TestCase
-      def test_method
-        req = Request.new(:post)
-        assert_equal req.method, :get
+      def test_meth
+        assert_equal meth(req_post), :get
       end
     end
 
     # 1) Failure:
-    # test_method(Tests)
+    # test_meth(Tests)
     # <:get> expected but was <:post>.
 
 !SLIDE
 # Propositional equality (ill-typed) #
 
-    test-method : method (req POST) ≡ GET
-    test-method = refl
+    test-meth : meth req-post ≡ GET
+    test-meth = refl
 
     -- POST != GET of type Method
     -- when checking that the expression refl
@@ -123,15 +130,13 @@ TODO: mutter unit tests
 !SLIDE
 # `created?` (diverging) & `resolve` (complete) #
 
-    class Request
-      def created?() raise end
+    def created?(_) raise end
 
-      def self.resolve(r)
-        if r.created?
-          :created
-        else
-          :internal_error
-        end
+    def resolve(r)
+      if created?(r)
+        :created
+      else
+        :internal_error
       end
     end
 
@@ -150,16 +155,16 @@ TODO: mutter unit tests
 
     class Tests < Test::Unit::TestCase
       def test_created_resolve
-        req = Request.new(:post)
-        req.stubs(:created?).returns(true)
-        assert_equal Request.resolve(req),
+        stubs(:created?).
+          with(req_post).returns(true)
+        assert_equal resolve(req_post),
                      :created
       end
 
       def test_internal_error_resolve
-        req = Request.new(:delete)
-        req.stubs(:created?).returns(false)
-        assert_equal Request.resolve(req),
+        stubs(:created?).
+          with(req_delete).returns(false)
+        assert_equal resolve(req_delete),
                      :internal_error
       end
     end
@@ -168,14 +173,14 @@ TODO: mutter unit tests
 # Hypothetical propositional equality #
 
     test-created-resolve :
-      created? (req POST) ≡ true →
-      resolve  (req POST) ≡ Created
+      created? req-post ≡ true →
+      resolve req-post ≡ Created
     test-created-resolve p rewrite p =
       refl
 
     test-internal-error-resolve :
-      created? (req DELETE) ≡ false →
-      resolve  (req DELETE) ≡ InternalError
+      created? req-delete ≡ false →
+      resolve req-delete ≡ InternalError
     test-internal-error-resolve p rewrite p =
       refl
 
@@ -199,74 +204,31 @@ TODO: mutter unit tests
 
     class Tests < Test::Unit::TestCase
       def test_created_resolve
-        req = mock
-        req.stubs(:created?).returns(true)
-        assert_equal Request.resolve(req),
-                     :created
+        r = mock
+        stubs(:created?).with(r).returns(true)
+        assert_equal resolve(r), :created
       end
 
       def test_internal_error_resolve
-        req = mock
-        req.stubs(:created?).returns(false)
-        assert_equal Request.resolve(req),
-                     :internal_error
+        r = mock
+        stubs(:created?).with(r).returns(false)
+        assert_equal resolve(r), :internal_error
       end
     end
-
-!SLIDE
-# Universal quantification (no hypothesis) #
-
-    test-created-resolve : ∀ {r} →
-      resolve r ≡ Created
-    test-created-resolve = refl
-
-    -- resolve .r | (created? .r | method .r) !=
-    --   Created of type Status
-    -- when checking that the expression refl
-    --   has type (resolve .r | (created? .r |
-    --   method .r)) ≡ Created
-
-!NOTES
-
-Universal quantification in affect causes all functions that use it to
-behave as if they were postulated/diverging
-
-!SLIDE
-# Mock (no stub) #
-
-    class Tests < Test::Unit::TestCase
-      def test_created_resolve
-        req = mock
-        assert_equal Request.resolve(req),
-                     :created
-      end
-    end
-
-    # test_created_resolve(Tests)
-    #   ['resolve' in 'test_created_resolve']:
-    # unexpected invocation: 
-    #   #<Mock:0x1011a0d18>.created?()
-
-!NOTES
-
-Mocked methods simply do not have methods defined
-
-To see how mock / universal quantification differs we must look at
-what happens when created? is completed
 
 !SLIDE
 # `created?` (complete) #
 
     class Request
       def created?
-        method == :post
+        meth == :post
       end
     end
 
 ---------------------------------------
 
     created? : Request → Bool
-    created? r with method r
+    created? r with meth r
     ... | POST = true
     ... | _    = false
 
@@ -278,15 +240,59 @@ Mock differs in the complete scenario in that it still requires a
 stub, & similarly universal quantification still requires a hypothesis
 
 !SLIDE
+# Universal quantification (no hypothesis) #
+
+    test-created-resolve : ∀ {r} →
+      resolve r ≡ Created
+    test-created-resolve = refl
+
+    -- resolve .r | (created? .r | meth .r) !=
+    --   Created of type Status
+    -- when checking that the expression refl
+    --   has type (resolve .r | (created? .r |
+    --   meth .r)) ≡ Created
+
+!NOTES
+
+Universal quantification in affect causes all functions that use it to
+behave as if they were postulated/diverging
+
+!SLIDE
+# Mock (no stub) #
+
+    class Tests < Test::Unit::TestCase
+      def test_created_resolve
+        r = mock
+        assert_equal resolve(r), :created
+      end
+    end
+
+    #     1) Failure:
+    # test_created_resolve(Tests)
+    #     [in `meth'
+    #      in `created?'
+    #      in `resolve'
+    #      in `test_created_resolve']:
+    # unexpected invocation:
+    #   #<Mock:0x1011a0340>.meth()
+
+!NOTES
+
+Mocked methods simply do not have methods defined
+
+To see how mock / universal quantification differs we must look at
+what happens when created? is completed
+
+!SLIDE
 # Proof composition #
 
     test-POST-created : ∀ {r} →
-      method r ≡ POST →
+      meth r ≡ POST →
       created? r ≡ true
     test-POST-created p rewrite p = refl
 
     test-POST-resolve : ∀ {r} →
-      method  r ≡ POST →
+      meth r ≡ POST →
       resolve r ≡ Created
     test-POST-resolve p =
       test-created-resolve (test-POST-created p)
@@ -294,35 +300,46 @@ stub, & similarly universal quantification still requires a hypothesis
 !SLIDE
 # Test composition #
 
-!SLIDE center
+    class Tests < Test::Unit::TestCase
+      def test_created_resolve
+        r = mock
+        stubs(:created?).with(r).returns(true)
+        assert_equal resolve(r), :created
+      end
+    end
 
-<table border="1" cellpadding="6">
-<caption>Software verification</caption>
+---------------------------------------
 
-<tr>
-<th>Testing (informal)</th>
-<th>Proving (formal)</th>
-</tr>
-
-<tr>
-<td>equality assertion</td>
-<td>≡ typing judgement</td>
-</tr>
-
-<tr>
-<td>stub</td>
-<td>hypothetical ≡ typing judgement</td>
-</tr>
-
-<tr>
-<td>mock</td>
-<td>universal quantification</td>
-</tr>
-
-</table>
+    class Tests < Test::Unit::TestCase
+      def test_created_resolve(r=mock)
+        stubs(:created?).with(r).returns(true)
+        assert_equal resolve(r), :created
+        r
+      end
+    end
 
 !SLIDE
-# Details #
+# Test composition #
+
+    class Tests < Test::Unit::TestCase
+      def test_post_created(r=mock)
+        stubs(:meth).with(r).returns(:post)
+        assert_equal created?(r), true
+        r
+      end
+
+      def test_post_resolve(r=mock)
+        test_created_resolve(test_post_created(r))
+        assert_equal resolve(r), :created
+        r
+      end
+    end
+
+!SLIDE bullets
+# Last remarks #
+
+* Stronger must-diverge stub
+* lazy vs strict
 
 !NOTES
 
@@ -336,3 +353,6 @@ Rewrites may be performed more than once, just as stubs with multiple
 values may be defined.
 
 Composition becomes powerful with things like the Middleware type.
+
+!SLIDE
+# Questions? #

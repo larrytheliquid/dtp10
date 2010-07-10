@@ -4,10 +4,10 @@ require 'mocha'
 
 METHODS  = [:get, :put, :post, :delete]
 
-Request  = Struct.new(:method)
+Request  = Struct.new(:meth)
 
 def req(m)       Request.new(m)               end
-def meth(r)      r.method                     end
+def meth(r)      r.meth                     end
 
 def req_post()   @req_post   ||= req(:post)   end
 def req_delete() @req_delete ||= req(:delete) end

@@ -1,7 +1,7 @@
 require 'core'
 
 def created?(r)
-  method(r) == :post
+  meth(r) == :post
 end
 
 def resolve(r)

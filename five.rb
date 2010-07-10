@@ -1,7 +1,7 @@
 require 'core'
 
 def created?(r)
-  method(r) == :post
+  meth(r) == :post
 end
 
 def resolve(r)
@@ -24,4 +24,12 @@ class Tests < Test::Unit::TestCase
     stubs(:created?).with(r).returns(false)
     assert_equal resolve(r), :internal_error
   end
+
+#     1) Failure:
+# test_created_resolve(Tests)
+#     [in `meth'
+#      in `created?'
+#      in `resolve'
+#      in `test_created_resolve']:
+# unexpected invocation: #<Mock:0x1011a0340>.meth()
 end
