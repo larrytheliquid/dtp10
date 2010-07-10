@@ -219,10 +219,8 @@ flipped assert_equal argument order to make it look more similar
 !SLIDE
 # `created?` (complete) #
 
-    class Request
-      def created?
-        meth == :post
-      end
+    def created?(r)
+      meth(r) == :post
     end
 
 ---------------------------------------
